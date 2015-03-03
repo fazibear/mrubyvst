@@ -14,17 +14,17 @@
 
 //-------------------------------------------------------------------------------------------------------
 AudioEffect* createEffectInstance(audioMasterCallback audioMaster) {
-	return new MRubyVst(audioMaster);
+  return new MRubyVst(audioMaster);
 }
 
 //-------------------------------------------------------------------------------------------------------
 MRubyVst::MRubyVst(audioMasterCallback audioMaster): AudioEffectX(audioMaster, PROGRAMS_COUNT, PARAMETERS_COUNT) {
   // 1 program, 1 parameter only
-	setUniqueID('mrby');
-	canProcessReplacing();
+  setUniqueID('mrby');
+  canProcessReplacing();
 
-  setNumInputs(2);		// stereo in
-	setNumOutputs(2);		// stereo out
+  setNumInputs(2);    // stereo in
+  setNumOutputs(2);   // stereo out
 
   setProgramNames();
 }
@@ -109,19 +109,19 @@ void MRubyVst::getParameterName(VstInt32 index, char* label) {
 //-----------------------------------------------------------------------------------------
 void MRubyVst::getParameterDisplay(VstInt32 index, char* text) {
   mrb_value mrb_display = mrb_funcall(mrb, vst_instance, "parameter_display", 1, mrb_fixnum_value(index));
-	const char *return_display;
+  const char *return_display;
   if (!mrb_nil_p(mrb_display)) {
     return_display = RSTRING_PTR(mrb_display);
   }else{
     return_display = "";
   }
-	vst_strncpy(text, return_display, kVstMaxParamStrLen);
+  vst_strncpy(text, return_display, kVstMaxParamStrLen);
 }
 
 //-----------------------------------------------------------------------------------------
 void MRubyVst::getParameterLabel(VstInt32 index, char* label) {
   mrb_value mrb_label = mrb_funcall(mrb, vst_instance, "parameter_label", 1, mrb_fixnum_value(index));
-	const char *return_label;
+  const char *return_label;
   if (!mrb_nil_p(mrb_label)) {
     return_label = RSTRING_PTR(mrb_label);
   }else{
@@ -133,47 +133,47 @@ void MRubyVst::getParameterLabel(VstInt32 index, char* label) {
 //------------------------------------------------------------------------
 bool MRubyVst::getEffectName(char* name) {
   mrb_value mrb_name = mrb_funcall(mrb, vst_instance, "name", 0);
-	const char *return_name;
+  const char *return_name;
   if (!mrb_nil_p(mrb_name)) {
     return_name = RSTRING_PTR(mrb_name);
   }else{
     return_name = "";
   }
-	vst_strncpy(name, return_name, kVstMaxEffectNameLen);
-	return true;
+  vst_strncpy(name, return_name, kVstMaxEffectNameLen);
+  return true;
 }
 
 //------------------------------------------------------------------------
 bool MRubyVst::getProductString(char* text) {
   mrb_value mrb_product = mrb_funcall(mrb, vst_instance, "product", 0);
-	const char *return_product;
+  const char *return_product;
   if (!mrb_nil_p(mrb_product)) {
     return_product = RSTRING_PTR(mrb_product);
   }else{
     return_product = "";
   }
   vst_strncpy (text, return_product, kVstMaxVendorStrLen);
-	return true;
+  return true;
 }
 
 //------------------------------------------------------------------------
 bool MRubyVst::getVendorString(char* text) {
   mrb_value mrb_vendor = mrb_funcall(mrb, vst_instance, "vendor", 0);
   const char *return_vendor;
-	if (!mrb_nil_p(mrb_vendor)) {
+  if (!mrb_nil_p(mrb_vendor)) {
     return_vendor = RSTRING_PTR(mrb_vendor);
   }else{
     return_vendor = "";
   }
   vst_strncpy (text, return_vendor, kVstMaxVendorStrLen);
-	return true;
+  return true;
 }
 
 //-----------------------------------------------------------------------------------------
 VstInt32 MRubyVst::getVendorVersion () {
   return 0;
   mrb_value mrb_version = mrb_funcall(mrb, vst_instance, "version", 0);
-	if (!mrb_nil_p(mrb_version)) {
+  if (!mrb_nil_p(mrb_version)) {
     return mrb_fixnum(mrb_version);
   }else{
     return 0;
