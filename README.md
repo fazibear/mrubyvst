@@ -7,7 +7,7 @@ VST plugin with MRuby
   - rake LDFLAGS="-m32" CFLAGS="-m32"
 
 # install
-- `https://github.com/fazibear/mrubyvst.git`
+- `git clone https://github.com/fazibear/mrubyvst.git`
 - `rake init`
 - edit Rakefile
   - change MRUBY_DIR - path to MRuby root directory
