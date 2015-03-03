@@ -18,3 +18,10 @@ VST plugin with MRuby
 - `rake compile`
 - run your DAW (Tested in Ableton Live 9 Trial)
 - enjoy ;)
+
+# notes
+- it crashes some times - mruby is not thread safe
+- takes a lot of cpu - mruby is not a speed demon
+
+# screenshot
+![](/screenshot.png?raw=true "screenshot")
