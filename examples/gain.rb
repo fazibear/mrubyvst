@@ -46,5 +46,4 @@ class VST
     data[1].map!{ |right| right * @gain }
     data
   end
-
 end
