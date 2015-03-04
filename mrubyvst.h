@@ -4,7 +4,7 @@
 #include <mruby/compile.h>
 
 #define PROGRAMS_COUNT 10
-#define PARAMETERS_COUNT 10
+#define PARAMETERS_COUNT 4
 #define SCRIPT_EMPTY_NAME "---"
 
 #define SCRIPTS_DIR "/Users/fazibear/dev/mrubyvst/examples/"
