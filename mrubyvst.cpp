@@ -54,20 +54,23 @@ void MRubyVst::setProgramNames() {
 
 //-------------------------------------------------------------------------------------------------------
 void MRubyVst::setProgram(VstInt32 index) {
+  mrb_state *mrb_local = mrb_open();
+  mrb_value vst_instance_local;
+
   if(strcmp(programs[index].c_str(), SCRIPT_EMPTY_NAME)){
     std::string script = SCRIPTS_DIR;
     script += programs[index];
 
-    mrb = mrb_open();
-
     FILE *file = fopen(script.c_str(), "r");
     if (file == NULL) {
     } else {
-      mrb_load_file(mrb, file);
-      mrb_value vst_class = mrb_vm_const_get(mrb, mrb_intern_lit(mrb,"VST"));
-      vst_instance = mrb_instance_new(mrb, vst_class);
+      mrb_load_file(mrb_local, file);
+      mrb_value vst_class = mrb_vm_const_get(mrb_local, mrb_intern_lit(mrb_local,"VST"));
+      vst_instance_local = mrb_instance_new(mrb_local, vst_class);
       fclose(file);
     }
+    mrb = mrb_local;
+    vst_instance = vst_instance_local;
   }
   curProgram = index;
   updateDisplay();
@@ -183,32 +186,36 @@ VstInt32 MRubyVst::getVendorVersion () {
 //-----------------------------------------------------------------------------------------
 void MRubyVst::processReplacing(float** inputs, float** outputs, VstInt32 sampleFrames) {
   if(mrb_respond_to(mrb, vst_instance, mrb_intern_lit(mrb, "process_replacing"))){
+
+    mrb_state *mrb_local = mrb;
+    mrb_value vst_instance_local = vst_instance;
+
     float* in1  =  inputs[0];
     float* in2  =  inputs[1];
     float* out1 = outputs[0];
     float* out2 = outputs[1];
 
-    mrb_value mrb_inputs = mrb_ary_new(mrb);
-    mrb_value mrb_input_1 = mrb_ary_new(mrb);
-    mrb_value mrb_input_2 = mrb_ary_new(mrb);
+    mrb_value mrb_inputs = mrb_ary_new(mrb_local);
+    mrb_value mrb_input_1 = mrb_ary_new(mrb_local);
+    mrb_value mrb_input_2 = mrb_ary_new(mrb_local);
 
     for (int i=0;i<sampleFrames;i++) {
-      mrb_ary_push(mrb, mrb_input_1, mrb_float_value(mrb, (*in1++)));
-      mrb_ary_push(mrb, mrb_input_2, mrb_float_value(mrb, (*in2++)));
+      mrb_ary_push(mrb_local, mrb_input_1, mrb_float_value(mrb_local, (*in1++)));
+      mrb_ary_push(mrb_local, mrb_input_2, mrb_float_value(mrb_local, (*in2++)));
     }
 
-    mrb_ary_push(mrb, mrb_inputs, mrb_input_1);
-    mrb_ary_push(mrb, mrb_inputs, mrb_input_2);
+    mrb_ary_push(mrb_local, mrb_inputs, mrb_input_1);
+    mrb_ary_push(mrb_local, mrb_inputs, mrb_input_2);
 
-    mrb_value mrb_outputs = mrb_funcall(mrb, vst_instance, "process_replacing", 1, mrb_inputs);
+    mrb_value mrb_outputs = mrb_funcall(mrb_local, vst_instance_local, "process_replacing", 1, mrb_inputs);
 
     if (!mrb_nil_p(mrb_outputs)) {
-      mrb_value mrb_output_1 = mrb_ary_shift(mrb, mrb_outputs);
-      mrb_value mrb_output_2 = mrb_ary_shift(mrb, mrb_outputs);
+      mrb_value mrb_output_1 = mrb_ary_shift(mrb_local, mrb_outputs);
+      mrb_value mrb_output_2 = mrb_ary_shift(mrb_local, mrb_outputs);
 
       for (int i=0;i<sampleFrames;i++) {
-        out1[i] = mrb_float(mrb_ary_shift(mrb, mrb_output_1));
-        out2[i] = mrb_float(mrb_ary_shift(mrb, mrb_output_2));
+        out1[i] = mrb_float(mrb_ary_shift(mrb_local, mrb_output_1));
+        out2[i] = mrb_float(mrb_ary_shift(mrb_local, mrb_output_2));
       }
     }
   }

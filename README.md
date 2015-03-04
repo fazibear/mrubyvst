@@ -20,7 +20,7 @@ VST plugin with MRuby
 - enjoy ;)
 
 # notes
-- it crashes some times - mruby is not thread safe
+- it crashes some times
 - takes a lot of cpu - mruby is not a speed demon
 
 # screenshot
