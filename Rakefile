@@ -40,3 +40,4 @@ task :compile do
   sh "g++ -arch i386 -bundle #{vst_includes} -o mrubyvst.vst/Contents/MacOS/mrubyvst #{mruby_includes} #{vst_sdk_sources} mrubyvst.cpp"
 end
 
+task :default => :compile

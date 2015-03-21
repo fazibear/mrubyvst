@@ -5,14 +5,13 @@
 
 #define PROGRAMS_COUNT 10
 #define PARAMETERS_COUNT 4
-#define SCRIPT_EMPTY_NAME "---"
-
-#define SCRIPTS_DIR "/Users/fazibear/dev/mrubyvst/examples/"
+#define SCRIPT_PATH "/Users/fazibear/dev/mrubyvst/mrubyvst.rb"
+#define VST_CLASS "MRubyVST"
 
 //-------------------------------------------------------------------------------------------------------
 class MRubyVst : public AudioEffectX {
 
-  public:
+public:
   MRubyVst(audioMasterCallback audioMaster);
   ~MRubyVst();
 
@@ -20,12 +19,10 @@ class MRubyVst : public AudioEffectX {
 
   // Processing
   virtual void processReplacing(float** inputs, float** outputs, VstInt32 sampleFrames);
-  virtual void processDoubleReplacing(double** inputs, double** outputs, VstInt32 sampleFrames);
 
   // Program
-  void setProgramNames();
   virtual void setProgram(VstInt32 index);
-  virtual void getProgramName(char* name);
+  virtual bool getProgramNameIndexed(VstInt32 category, VstInt32 index, char* text);
 
   // Parameters
   virtual void setParameter(VstInt32 index, float value);
@@ -40,8 +37,6 @@ class MRubyVst : public AudioEffectX {
   virtual VstInt32 getVendorVersion();
 
 protected:
-  std::string programs[PROGRAMS_COUNT];
-
   mrb_state *mrb;
   mrb_value vst_instance;
 };
