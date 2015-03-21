@@ -1,7 +1,14 @@
 #include "public.sdk/source/vst2.x/audioeffectx.h"
 
-#include <mruby.h>
-#include <mruby/compile.h>
+#include <mutex>
+
+#include "mruby.h"
+#include "mruby/compile.h"
+#include "mruby/string.h"
+#include "mruby/array.h"
+#include "mruby/class.h"
+#include "mruby/variable.h"
+
 
 #define PROGRAMS_COUNT 10
 #define PARAMETERS_COUNT 4
@@ -37,6 +44,7 @@ public:
   virtual VstInt32 getVendorVersion();
 
 protected:
+  std::mutex m;
   mrb_state *mrb;
   mrb_value vst_instance;
 };
