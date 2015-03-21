@@ -41,6 +41,8 @@ void MRubyVst::setProgram(VstInt32 index) {
     mrb_funcall(mrb, vst_instance, "change_program", 1, mrb_fixnum_value(index));
   }
   m.unlock();
+  curProgram = index;
+  updateDisplay();
 }
 
 //-----------------------------------------------------------------------------------------
