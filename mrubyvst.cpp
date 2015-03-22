@@ -23,8 +23,8 @@ MRubyVst::MRubyVst(audioMasterCallback audioMaster): AudioEffectX(audioMaster, P
     mrb_value vst_class = mrb_vm_const_get(mrb, mrb_intern_lit(mrb, VST_CLASS));
     mrb_const_set(mrb, vst_class, mrb_intern_lit(mrb, "PROGRAMS_COUNT"), mrb_fixnum_value(PROGRAMS_COUNT));
     mrb_const_set(mrb, vst_class, mrb_intern_lit(mrb, "PARAMETERS_COUNT"), mrb_fixnum_value(PARAMETERS_COUNT));
+    mrb_const_set(mrb, vst_class, mrb_intern_lit(mrb, "SAMPLE_RATE"), mrb_float_value(mrb, getSampleRate()));
     mrb_const_set(mrb, vst_class, mrb_intern_lit(mrb, "SCRIPT_PATH"), mrb_str_new_cstr(mrb, (SCRIPT_PATH)));
-
     vst_instance = mrb_instance_new(mrb, vst_class);
     fclose(file);
   }

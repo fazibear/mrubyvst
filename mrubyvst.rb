@@ -18,8 +18,6 @@
 # process(data)                  -> Array
 
 class MRubyVST
-  module Sandbox; end
-
   attr_reader :vendor, :product, :effect_name, :version
 
   def initialize

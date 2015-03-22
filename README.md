@@ -5,7 +5,6 @@ VST plugin with MRuby
 - VST SDK
 - MRuby complied with 32bit flags
   - add gems
-    - conf.gem :core => 'mruby-math'
     - conf.gem :core => 'mruby-eval'
     - conf.gem :github => 'iij/mruby-pack'
     - conf.gem :github => 'iij/mruby-io'
