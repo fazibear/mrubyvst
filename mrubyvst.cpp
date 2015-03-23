@@ -185,6 +185,8 @@ VstInt32 MRubyVst::getVendorVersion () {
 void MRubyVst::processReplacing(float** inputs, float** outputs, VstInt32 sampleFrames) {
   m.lock();
   if(mrb_respond_to(mrb, vst_instance, mrb_intern_lit(mrb, "process"))){
+    int ai = mrb_gc_arena_save(mrb);
+
     float* in1  =  inputs[0];
     float* in2  =  inputs[1];
     float* out1 = outputs[0];
@@ -215,6 +217,7 @@ void MRubyVst::processReplacing(float** inputs, float** outputs, VstInt32 sample
         (*out2++) = mrb_float(mrb_ary_shift(mrb, mrb_output_2));
       }
     }
+    mrb_gc_arena_restore(mrb, ai);
   }
   m.unlock();
 }

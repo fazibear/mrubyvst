@@ -30,7 +30,6 @@ VST plugin with MRuby
 
 # notes
 - takes a lot of cpu - mruby is not a speed demon
-- it leaks :/
 
 # screenshot
 ![](/screenshot.png?raw=true "screenshot")
