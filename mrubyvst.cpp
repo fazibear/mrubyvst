@@ -17,8 +17,7 @@ MRubyVst::MRubyVst(audioMasterCallback audioMaster): AudioEffectX(audioMaster, P
   mrb = mrb_open();
 
   FILE *file = fopen(SCRIPT_PATH, "r");
-  if (file == NULL) {
-  } else {
+  if (file != NULL) {
     mrb_load_file(mrb, file);
     mrb_value vst_class = mrb_vm_const_get(mrb, mrb_intern_lit(mrb, VST_CLASS));
     mrb_const_set(mrb, vst_class, mrb_intern_lit(mrb, "PROGRAMS_COUNT"), mrb_fixnum_value(PROGRAMS_COUNT));
