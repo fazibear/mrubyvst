@@ -7,8 +7,7 @@ AudioEffect* createEffectInstance(audioMasterCallback audioMaster) {
 
 //-------------------------------------------------------------------------------------------------------
 MRubyVst::MRubyVst(audioMasterCallback audioMaster): AudioEffectX(audioMaster, PROGRAMS_COUNT, PARAMETERS_COUNT) {
-
-  setUniqueID('mrbv');
+  setUniqueID(666);
   canProcessReplacing();
 
   setNumInputs(2);
@@ -19,12 +18,15 @@ MRubyVst::MRubyVst(audioMasterCallback audioMaster): AudioEffectX(audioMaster, P
   FILE *file = fopen(SCRIPT_PATH, "r");
   if (file != NULL) {
     mrb_load_file(mrb, file);
+
     mrb_value vst_class = mrb_vm_const_get(mrb, mrb_intern_lit(mrb, VST_CLASS));
     mrb_const_set(mrb, vst_class, mrb_intern_lit(mrb, "PROGRAMS_COUNT"), mrb_fixnum_value(PROGRAMS_COUNT));
     mrb_const_set(mrb, vst_class, mrb_intern_lit(mrb, "PARAMETERS_COUNT"), mrb_fixnum_value(PARAMETERS_COUNT));
     mrb_const_set(mrb, vst_class, mrb_intern_lit(mrb, "SAMPLE_RATE"), mrb_float_value(mrb, getSampleRate()));
     mrb_const_set(mrb, vst_class, mrb_intern_lit(mrb, "SCRIPT_PATH"), mrb_str_new_cstr(mrb, (SCRIPT_PATH)));
+
     vst_instance = mrb_instance_new(mrb, vst_class);
+
     fclose(file);
   }
 
@@ -38,7 +40,7 @@ MRubyVst::~MRubyVst() {
 //-------------------------------------------------------------------------------------------------------
 void MRubyVst::setProgram(VstInt32 index) {
   m.lock();
-  if(mrb_respond_to(mrb, vst_instance, mrb_intern_lit(mrb, "change_program"))){
+  if(!mrb_nil_p(vst_instance) && mrb_respond_to(mrb, vst_instance, mrb_intern_lit(mrb, "change_program"))){
     mrb_funcall(mrb, vst_instance, "change_program", 1, mrb_fixnum_value(index));
   }
   m.unlock();
@@ -49,14 +51,16 @@ void MRubyVst::setProgram(VstInt32 index) {
 //-----------------------------------------------------------------------------------------
 bool MRubyVst::getProgramNameIndexed(VstInt32 category, VstInt32 index, char* text) {
   m.lock();
-  if(mrb_respond_to(mrb, vst_instance, mrb_intern_lit(mrb, "program_name"))){
+  if(!mrb_nil_p(vst_instance) && mrb_respond_to(mrb, vst_instance, mrb_intern_lit(mrb, "program_name"))){
     mrb_value mrb_name = mrb_funcall(mrb, vst_instance, "program_name", 1, mrb_fixnum_value(index));
     if (!mrb_nil_p(mrb_name)) {
+      log( RSTRING_PTR(mrb_name) );
       vst_strncpy(text, RSTRING_PTR(mrb_name), kVstMaxProgNameLen);
       m.unlock();
       return true;
     }
   }
+
   m.unlock();
   return false;
 }
@@ -64,7 +68,7 @@ bool MRubyVst::getProgramNameIndexed(VstInt32 category, VstInt32 index, char* te
 //-----------------------------------------------------------------------------------------
 void MRubyVst::setParameter(VstInt32 index, float value) {
   m.lock();
-  if(mrb_respond_to(mrb, vst_instance, mrb_intern_lit(mrb, "set_parameter"))){
+  if(!mrb_nil_p(vst_instance) && mrb_respond_to(mrb, vst_instance, mrb_intern_lit(mrb, "set_parameter"))){
     mrb_funcall(mrb, vst_instance, "set_parameter", 2, mrb_fixnum_value(index), mrb_float_value(mrb, value));
   }
   m.unlock();
@@ -73,7 +77,7 @@ void MRubyVst::setParameter(VstInt32 index, float value) {
 //-----------------------------------------------------------------------------------------
 float MRubyVst::getParameter(VstInt32 index) {
   m.lock();
-  if(mrb_respond_to(mrb, vst_instance, mrb_intern_lit(mrb, "parameter_value"))){
+  if(!mrb_nil_p(vst_instance) && mrb_respond_to(mrb, vst_instance, mrb_intern_lit(mrb, "parameter_value"))){
     mrb_value mrb_param_value = mrb_funcall(mrb, vst_instance, "parameter_value", 1, mrb_fixnum_value(index));
     if (!mrb_nil_p(mrb_param_value)) {
       m.unlock();
@@ -87,7 +91,7 @@ float MRubyVst::getParameter(VstInt32 index) {
 //-----------------------------------------------------------------------------------------
 void MRubyVst::getParameterName(VstInt32 index, char* label) {
   m.lock();
-  if(mrb_respond_to(mrb, vst_instance, mrb_intern_lit(mrb, "parameter_name"))){
+  if(!mrb_nil_p(vst_instance) && mrb_respond_to(mrb, vst_instance, mrb_intern_lit(mrb, "parameter_name"))){
     mrb_value mrb_label = mrb_funcall(mrb, vst_instance, "parameter_name", 1, mrb_fixnum_value(index));
     if (!mrb_nil_p(mrb_label)) {
       vst_strncpy(label, RSTRING_PTR(mrb_label), kVstMaxParamStrLen);
@@ -99,7 +103,7 @@ void MRubyVst::getParameterName(VstInt32 index, char* label) {
 //-----------------------------------------------------------------------------------------
 void MRubyVst::getParameterDisplay(VstInt32 index, char* text) {
   m.lock();
-  if(mrb_respond_to(mrb, vst_instance, mrb_intern_lit(mrb, "parameter_display_value"))){
+  if(!mrb_nil_p(vst_instance) && mrb_respond_to(mrb, vst_instance, mrb_intern_lit(mrb, "parameter_display_value"))){
     mrb_value mrb_display = mrb_funcall(mrb, vst_instance, "parameter_display_value", 1, mrb_fixnum_value(index));
     if (!mrb_nil_p(mrb_display)) {
       vst_strncpy(text, RSTRING_PTR(mrb_display), kVstMaxParamStrLen);
@@ -111,7 +115,7 @@ void MRubyVst::getParameterDisplay(VstInt32 index, char* text) {
 //-----------------------------------------------------------------------------------------
 void MRubyVst::getParameterLabel(VstInt32 index, char* label) {
   m.lock();
-  if(mrb_respond_to(mrb, vst_instance, mrb_intern_lit(mrb, "parameter_label"))){
+  if(!mrb_nil_p(vst_instance) && mrb_respond_to(mrb, vst_instance, mrb_intern_lit(mrb, "parameter_label"))){
     mrb_value mrb_label = mrb_funcall(mrb, vst_instance, "parameter_label", 1, mrb_fixnum_value(index));
     if (!mrb_nil_p(mrb_label)) {
       vst_strncpy(label, RSTRING_PTR(mrb_label), kVstMaxParamStrLen);
@@ -123,7 +127,7 @@ void MRubyVst::getParameterLabel(VstInt32 index, char* label) {
 //------------------------------------------------------------------------
 bool MRubyVst::getEffectName(char* name) {
   m.lock();
-  if(mrb_respond_to(mrb, vst_instance, mrb_intern_lit(mrb, "effect_name"))){
+  if(!mrb_nil_p(vst_instance) && mrb_respond_to(mrb, vst_instance, mrb_intern_lit(mrb, "effect_name"))){
     mrb_value mrb_name = mrb_funcall(mrb, vst_instance, "effect_name", 0);
     if (!mrb_nil_p(mrb_name)) {
       vst_strncpy(name, RSTRING_PTR(mrb_name), kVstMaxEffectNameLen);
@@ -138,7 +142,7 @@ bool MRubyVst::getEffectName(char* name) {
 //------------------------------------------------------------------------
 bool MRubyVst::getProductString(char* text) {
   m.lock();
-  if(mrb_respond_to(mrb, vst_instance, mrb_intern_lit(mrb, "product"))){
+  if(!mrb_nil_p(vst_instance) && mrb_respond_to(mrb, vst_instance, mrb_intern_lit(mrb, "product"))){
     mrb_value mrb_product = mrb_funcall(mrb, vst_instance, "product", 0);
     if (!mrb_nil_p(mrb_product)) {
       vst_strncpy(text, RSTRING_PTR(mrb_product), kVstMaxProductStrLen);
@@ -153,7 +157,7 @@ bool MRubyVst::getProductString(char* text) {
 //------------------------------------------------------------------------
 bool MRubyVst::getVendorString(char* text) {
   m.lock();
-  if(mrb_respond_to(mrb, vst_instance, mrb_intern_lit(mrb, "vendor"))){
+  if(!mrb_nil_p(vst_instance) && mrb_respond_to(mrb, vst_instance, mrb_intern_lit(mrb, "vendor"))){
     mrb_value mrb_vendor = mrb_funcall(mrb, vst_instance, "vendor", 0);
     if (!mrb_nil_p(mrb_vendor)) {
       vst_strncpy(text, RSTRING_PTR(mrb_vendor), kVstMaxVendorStrLen);
@@ -167,9 +171,8 @@ bool MRubyVst::getVendorString(char* text) {
 
 //-----------------------------------------------------------------------------------------
 VstInt32 MRubyVst::getVendorVersion () {
-  return 0;
   m.lock();
-  if(mrb_respond_to(mrb, vst_instance, mrb_intern_lit(mrb, "version"))){
+  if(!mrb_nil_p(vst_instance) && mrb_respond_to(mrb, vst_instance, mrb_intern_lit(mrb, "version"))){
     mrb_value mrb_version = mrb_funcall(mrb, vst_instance, "version", 0);
     if (!mrb_nil_p(mrb_version)) {
       m.unlock();
@@ -183,7 +186,7 @@ VstInt32 MRubyVst::getVendorVersion () {
 //-----------------------------------------------------------------------------------------
 void MRubyVst::processReplacing(float** inputs, float** outputs, VstInt32 sampleFrames) {
   m.lock();
-  if(mrb_respond_to(mrb, vst_instance, mrb_intern_lit(mrb, "process"))){
+  if(!mrb_nil_p(vst_instance) && mrb_respond_to(mrb, vst_instance, mrb_intern_lit(mrb, "process"))){
     int ai = mrb_gc_arena_save(mrb);
 
     float* in1  =  inputs[0];
@@ -228,4 +231,3 @@ void MRubyVst::log(const char* txt){
   fprintf(f, "%s\n", txt);
   fclose(f);
 }
-

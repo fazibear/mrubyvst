@@ -22,8 +22,9 @@ desc 'Compile VST'
 task :compile do
 
   mruby_includes = %W(
-    -L#{MRUBY_DIR}/build/host/lib/
-    #{MRUBY_DIR}/build/host/lib/libmruby.a
+    -I#{MRUBY_DIR}/include/
+    -L#{MRUBY_DIR}/build/mrubyvst/lib/
+    #{MRUBY_DIR}/build/mrubyvst/lib/libmruby.a
   ).join(' ')
 
   vst_includes = %W(
@@ -37,7 +38,7 @@ task :compile do
     #{VST_SDK_DIR}/public.sdk/source/vst2.x/vstplugmain.cpp
   ).join(' ')
 
-  sh "g++ -arch i386 -bundle #{vst_includes} -o mrubyvst.vst/Contents/MacOS/mrubyvst #{mruby_includes} #{vst_sdk_sources} mrubyvst.cpp"
+  sh "g++ -bundle #{vst_includes} -o mrubyvst.vst/Contents/MacOS/mrubyvst #{mruby_includes} #{vst_sdk_sources} mrubyvst.cpp"
 end
 
 task :default => :compile

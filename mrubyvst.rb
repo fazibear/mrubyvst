@@ -33,7 +33,9 @@ class MRubyVST
   end
 
   def load_program(path)
-    Module.new.instance_eval(File.open(path).read)
+    Module.new.instance_eval(
+      File.open(path).read
+    )
   end
 
   def change_program(index)
@@ -41,7 +43,7 @@ class MRubyVST
   end
 
   def program_name(index)
-    programs[index].to_s
+    programs[index] || "-empty-"
   end
 
   def set_parameter(index, value)

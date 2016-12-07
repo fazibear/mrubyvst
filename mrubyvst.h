@@ -22,8 +22,6 @@ public:
   MRubyVst(audioMasterCallback audioMaster);
   ~MRubyVst();
 
-  void log(const char* txt);
-
   // Processing
   virtual void processReplacing(float** inputs, float** outputs, VstInt32 sampleFrames);
 
@@ -38,10 +36,14 @@ public:
   virtual void getParameterDisplay(VstInt32 index, char* text);
   virtual void getParameterName(VstInt32 index, char* text);
 
+  // Info
   virtual bool getEffectName(char* name);
   virtual bool getVendorString(char* text);
   virtual bool getProductString(char* text);
   virtual VstInt32 getVendorVersion();
+
+  // Helpers
+  void log(const char* txt);
 
 protected:
   std::mutex m;
