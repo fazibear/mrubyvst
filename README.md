@@ -5,7 +5,7 @@ VST plugin with MRuby as a scripting language.
 
 ## VST SDK
 
-Install VST SDK form (Steinberg Website)[https://www.steinberg.net/]
+Install VST SDK form [Steinberg Website](https://www.steinberg.net/)
 
 ## MRuby
 
@@ -19,11 +19,6 @@ MRuby::Build.new('mrubyvst') do |conf|
   conf.gem :core => 'mruby-eval'
   conf.gem :github => 'iij/mruby-dir'
   conf.gem :github => 'iij/mruby-io'
-
-  # conf.gem :github => 'iij/mruby-pack'
-  # conf.gem :github => 'iij/mruby-socket'
-  # conf.gem :github => 'mattn/mruby-http'
-  # conf.gem :github => 'matsumoto-r/mruby-simplehttpserver'
 end
 ```
 
@@ -32,10 +27,10 @@ end
 - `git clone https://github.com/fazibear/mrubyvst.git`
 - `rake init`
 - edit Rakefile
-  - change MRUBY_DIR - path to MRuby root directory
-  - change VST_SDK_DIR - path to VST SDK root directory
-- `rake link`
+  - change `MRUBY_DIR` - path to MRuby root directory
+  - change `VST_SDK_DIR` - path to VST SDK root directory
 - `rake compile`
+- `rake link`
 - run your DAW (Tested in Ableton Live 9 Trial)
 - enjoy ;)
 
