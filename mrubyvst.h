@@ -9,12 +9,6 @@
 #include "mruby/class.h"
 #include "mruby/variable.h"
 
-
-#define PROGRAMS_COUNT 10
-#define PARAMETERS_COUNT 4
-#define SCRIPT_PATH "/Users/fazibear/dev/mrubyvst/mrubyvst.rb"
-#define VST_CLASS "MRubyVST"
-
 //-------------------------------------------------------------------------------------------------------
 class MRubyVst : public AudioEffectX {
 
