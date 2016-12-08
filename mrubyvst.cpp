@@ -54,7 +54,6 @@ bool MRubyVst::getProgramNameIndexed(VstInt32 category, VstInt32 index, char* te
   if(!mrb_nil_p(vst_instance) && mrb_respond_to(mrb, vst_instance, mrb_intern_lit(mrb, "program_name"))){
     mrb_value mrb_name = mrb_funcall(mrb, vst_instance, "program_name", 1, mrb_fixnum_value(index));
     if (!mrb_nil_p(mrb_name)) {
-      log( RSTRING_PTR(mrb_name) );
       vst_strncpy(text, RSTRING_PTR(mrb_name), kVstMaxProgNameLen);
       m.unlock();
       return true;
