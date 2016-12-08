@@ -1,10 +1,11 @@
-MRUBY_DIR = '/Users/fazibear/dev/mruby'
-VST_SDK_DIR = '/Users/fazibear/dev/vst-sdk'
+MRUBY_DIR = File.expand_path('../mruby')
+VST_SDK_DIR = File.expand_path('../vst-sdk')
+
+SCRIPT_PATH = File.expand_path('./mrubyvst.rb')
+VST_CLASS = 'MRubyVST'
 
 PROGRAMS_COUNT = 10
 PARAMETERS_COUNT = 4
-SCRIPT_PATH = File.expand_path("./mrubyvst.rb")
-VST_CLASS = "MRubyVST"
 
 desc 'Init VST directory'
 task :init do
